@@ -17,5 +17,9 @@ dependencies {
     implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
 }
 
+shadowJar {
+    minimize()
+}
+
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
