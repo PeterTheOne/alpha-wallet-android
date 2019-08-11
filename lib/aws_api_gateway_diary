@@ -85,3 +85,8 @@ I stopped because
 
 =============================================================================
 
+3. Implement IAM authentication for APIs created with Amazon API Gateway
+
+https://aws.amazon.com/en/premiumsupport/knowledge-center/iam-authentication-api-gateway/
+
+
