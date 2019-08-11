@@ -1,0 +1,87 @@
+0. Creating, Deploying, and Invoking a REST API in Amazon API Gateway » Deploying a REST API in Amazon API Gateway » Set up a Stage in API Gateway
+
+https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-logging.html
+
+What I did:
+
+- Configure None for Authorization in the method of the resource being tested
+
+- Configure "True" for API Keys Required in the same method.
+
+- Set up API Logging Using the API Gateway Console (I enabled both
+  Execution and Access log. The Access Log require some work on
+  constructing ARN)
+
+What result I got:
+
+For this call
+
+$ curl -d '{"Hello":"world"}' -X POST -H "X-API-Key: 1Vw9ytXsGZ423qXYkHgIw3ln9dO45NSL4hLbdVDc" -H "Content-Type: application/json"  https://1wf2q1a2ue.execute-api.cn-north-1.amazonaws.com.cn/Tabernacle/express-of-trust
+{"Message":null}
+
+I got the following entries on CloudWatch:
+
+(28ff4fe6-bc35-11e9-991e-b38858c5b74b) Extended Request Id: eQbq2HSiBTIFh9Q=
+(28ff4fe6-bc35-11e9-991e-b38858c5b74b) AccessDeniedException null: 28ff4fe6-bc35-11e9-991e-b38858c5b74b
+
+Such entry is observed again (with different hex code in the 2nd line
+of the log) when I turned off "API Keys Required" and re-deployed.
+
+What I think:
+
+At first, it was not clear if AccessDeniedException refer to
+
+1) The API Gateway couldn't authenticate the user, or
+
+2) The Lambda isn't authorized to be executed, or the rumor is true that API Gateway China only works if IAM authentication is enabled.
+
+The fact that the same error persisted with API Keys Required turned
+off and "Authorization" set to None, yet the test of the said
+method/resource works in API Gateway console, suggests that 1) is
+wrong.
+
+=============================================================================
+
+1. TUTORIAL: Create a Calc REST API with Two AWS Service Integrations and and One Lambda Non-Proxy Integration
+
+https://docs.aws.amazon.com/apigateway/latest/developerguide/integrating-api-with-aws-services-lambda.html#api-as-lambda-proxy-setup-iam-role-policies
+
+What I did:
+
+- Create an Assumable IAM Role
+
+I stopped because:
+
+- This role seems to be the role the lamba is going to execute in, not
+  what the API attempts to authenticate user with.
+
+=============================================================================
+
+2. Creating, Deploying, and Invoking a REST API in Amazon API Gateway » Controlling and Managing Access to a REST API in API Gateway » Create and Use Usage Plans with API Keys
+
+https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-key-source.html
+
+What I did:
+
+- Choose an API Key Source
+- Set Up API Keys Using the API Gateway Console
+	user: android
+	key: 1Vw9ytXsGZ423qXYkHgIw3ln9dO45NSL4hLbdVDc
+
+
+I stopped because
+
+- Despite using API Keys, I still get {"Message":null} in the output.
+
+- There are two configuration options on API resource method request:
+  Authorization and API-Key Required. This guide seem to affect the
+  second option only.
+
+- It seems the first option, "Authorization", has both authentication
+  means and authorization in it, evident by the mentioning of
+  Signature in its mouse-over message: "Use AWS_IAM authorization to
+  have API Gateway verify the signature on requests, or select a
+  Lambda Authorizer"
+
+=============================================================================
+
