@@ -63,8 +63,8 @@ public class LambdaFunctionTest {
 
     @Test
     public void testLambdaFunction() {
-        final String aws_access_key_id = "AKIATTNYKZHVUGSZCFHP";
-        final String aws_secret_access_key = "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";
+        final String aws_access_key_id = "AKIATTNYKZHVXF23T44J";
+        final String aws_secret_access_key = "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";
         final Logger logger = Logger.getLogger( this.getClass().getName() );
         final String messageToLambda = "Hello Lambda Function";
         final SimpleLambdaMessage messageObj = new SimpleLambdaMessage();

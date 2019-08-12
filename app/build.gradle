@@ -48,7 +48,7 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-            useProguard false
+            useProguard true
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'),
 //                    'proguard-rules.pro'
         }
@@ -61,6 +61,12 @@ android {
     packagingOptions {
         exclude 'META-INF/NOTICE' // will not include NOTICE file
         exclude 'META-INF/LICENSE' // will not include LICENSE file
+
+	// the following 3 files seem to be added more than 1 times by the inclusion of amazon-sdk
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+
         // as noted by @Vishnuvathsan you may also need to include
         // variations on the file name. It depends on your dependencies.
         // Some other common variations on notice and license file names
@@ -161,6 +167,8 @@ dependencies {
     })
 
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
+
+    implementation('com.amazonaws:aws-java-sdk:1.11.608')
 
     // PW
     implementation fileTree(include: ['*.jar'], dir: 'libs')

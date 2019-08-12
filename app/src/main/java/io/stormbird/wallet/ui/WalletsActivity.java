@@ -18,11 +18,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import com.amazonaws.services.lambda.AWSLambda;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dagger.android.AndroidInjection;
+import io.stormbird.token.tools.SimpleLambdaMessage;
 import io.stormbird.wallet.C;
 import io.stormbird.wallet.R;
 import io.stormbird.wallet.entity.ErrorEnvelope;
@@ -34,6 +40,16 @@ import io.stormbird.wallet.viewmodel.WalletsViewModelFactory;
 import io.stormbird.wallet.widget.AWalletAlertDialog;
 import io.stormbird.wallet.widget.AddWalletView;
 import io.stormbird.wallet.widget.SystemView;
+
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
+import com.amazonaws.services.lambda.model.InvokeRequest;
+import com.amazonaws.services.lambda.model.InvokeResult;
+import io.stormbird.token.tools.SimpleLambdaFunctionExample;
+import io.stormbird.token.tools.SimpleLambdaMessage;
+import com.amazonaws.protocol.json.SdkJsonGenerator.JsonGenerationException;
 
 public class WalletsActivity extends BaseActivity implements
         View.OnClickListener,
@@ -202,7 +218,39 @@ public class WalletsActivity extends BaseActivity implements
     public void onNewWallet(View view) {
         hideDialog();
         viewModel.newWallet();
+        final String accessID = "AKIATTNYKZHVXF23T44J";
+        final String accessKey = "bwOG9v/qdf4U199oqSnhjVtJgDOEDVEhBBU/htfG";
+        final String messageToLambda = "Hello Lambda Function";
+        final SimpleLambdaMessage messageObj = new SimpleLambdaMessage();
+        messageObj.setMessage(messageToLambda);
+
+        Regions region = Regions.fromName("cn-north-1");
+        BasicAWSCredentials credentials = new BasicAWSCredentials(accessID, accessKey);
+        AWSLambdaClientBuilder builder = AWSLambdaClientBuilder.standard()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withRegion(region);
+        AWSLambda lambdaClient = builder.build();
+
+        String lambdaMessageJSON = objectToJSON( messageObj);
+        InvokeRequest req = new InvokeRequest()
+                .withFunctionName(SimpleLambdaFunctionExample.lambdaFunctionName)
+                .withPayload( lambdaMessageJSON );
+        InvokeResult requestResult = lambdaClient.invoke(req);
+        ByteBuffer byteBuf = requestResult.getPayload();
+
     }
+
+    private static String objectToJSON( Object obj) {
+        String json = "";
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            json = mapper.writeValueAsString(obj);
+        } catch (JsonGenerationException | IOException e) {
+
+        }
+        return json;
+    }
+
 
     @Override
     public void onImportWallet(View view) {
