@@ -11,10 +11,14 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java-library'
 
 dependencies {
-    implementation('com.amazonaws:aws-lambda-java-core:1.2.0')
-    implementation('com.amazonaws:aws-lambda-java-events:2.2.6')
     testImplementation 'junit:junit:4.12'
     implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
+    implementation('com.amazonaws:aws-lambda-java-core:1.2.0')
+    implementation('com.amazonaws:aws-lambda-java-events:2.2.6')
+
+    // following are needed for test-cases. It increases build/libs/lib-all.jar
+    // from 1.5MB to 35MB, even when none of the Java classes uses it
+    implementation('com.amazonaws:aws-java-sdk:1.11.608')
 }
 
 shadowJar {

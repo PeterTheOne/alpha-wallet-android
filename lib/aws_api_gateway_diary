@@ -8,9 +8,10 @@ What I did:
 
 - Configure "True" for API Keys Required in the same method.
 
-- Set up API Logging Using the API Gateway Console (I enabled both
-  Execution and Access log. The Access Log require some work on
-  constructing ARN)
+- Set up API Logging Using the API Gateway Console. I enabled both
+  Execution and Access log. For the Access Log I used the same ARN as
+  the execution log and it turned out working:
+  arn:aws:logs:cn-north-1:247884073451:log-group:API-Gateway-Execution-Logs_1wf2q1a2ue/Tabernacle
 
 What result I got:
 
